@@ -5,10 +5,6 @@ module Featured
 
     attr_accessor :item
 
-    def self.db
-      @db ||= Fog::AWS::DynamoDB.new(aws_access_key_id: ENV['AWS_ACCESS_KEY'], aws_secret_access_key: ENV['AWS_SECRET_KEY'])
-    end
-
     def self.schema(attrs)
       attrs.each do |attr, type|
         class_eval "def #{attr}; @item['#{attr}']['#{type}'] if @item.key? '#{attr}' end", __FILE__, __LINE__
@@ -16,6 +12,10 @@ module Featured
       end
     end
 
+    schema :id    => :S,
+           :name  => :S
+
+    # Hmmmm... old stuff below
     schema entity: :S, name: :S, created_at: :N
 
     def self.set(item)
